@@ -6,7 +6,7 @@
 
 BASE_URL=https://bulkdata.uspto.gov/data2/patent/grant/redbook/fulltext
 
-START_YEAR=2002
+START_YEAR=2001
 END_YEAR=1976
 
 WAIT_BETWEEN_DOWNLOADS=5 # seconds
@@ -16,6 +16,7 @@ MAX_ERRORS=5 # maximum number of downloading failures before this script exits
 # --------------
 
 ERROR_COUNT=0
+GET_CMD="wget --limit-rate=2m --waitretry 5 --retry-connrefused --tries=3"
 
 for ((CUR_YEAR=$START_YEAR;CUR_YEAR>=$END_YEAR;CUR_YEAR--)); do
 
@@ -24,8 +25,6 @@ for ((CUR_YEAR=$START_YEAR;CUR_YEAR>=$END_YEAR;CUR_YEAR--)); do
     YEAR_URL=${BASE_URL}/${CUR_YEAR}
     
     YEAR_GET_CMD="wget -q -O- $YEAR_URL"
-    
-    GET_CMD="wget --limit-rate=2m --waitretry 5 --retry-connrefused --tries=3"
     
     FILES=$($YEAR_GET_CMD | awk 'match($0, /pftaps[^"]+/) {print substr($0, RSTART, RLENGTH)}')
     
